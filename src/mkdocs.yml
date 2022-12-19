@@ -1,0 +1,8 @@
+site_name: Backstage Docs
+
+nav:
+  - Home: index.md
+  - Developing a Plugin: developing-a-plugin.md
+
+plugins:
+  - techdocs-core
