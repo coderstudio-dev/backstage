@@ -1,3 +1,3 @@
 # backstage
 
-Custom implementation for CodeStudio Platform
+Custom implementation for CoderStudio Platform
