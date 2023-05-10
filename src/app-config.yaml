@@ -1,6 +1,6 @@
 app:
   title: CoderStudio Backstage App
-  baseUrl: http://localhost:3000
+  baseUrl: http://localhost:3001
 
 organization:
   name: CoderStudio
@@ -22,7 +22,7 @@ backend:
     # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
     # Default Helmet Content-Security-Policy values can be removed by setting the key to false
   cors:
-    origin: http://localhost:3000
+    origin: http://localhost:3001
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
     credentials: true
   # This is for local development only, it is not recommended to use this in production
@@ -61,7 +61,33 @@ proxy:
 techdocs:
   builder: 'local' # Alternatives - 'external'
   generator:
-    runIn: 'local' # Alternatives - 'local'
+    runIn: 'docker'
+
+    # (Optional) techdocs.generator.dockerImage can be used to control the docker image used during documentation generation. This can be useful
+    # if you want to use MkDocs plugins or other packages that are not included in the default techdocs-container (spotify/techdocs).
+    # NOTE: This setting is only used when techdocs.generator.runIn is set to 'docker'.
+
+    dockerImage: 'spotify/techdocs'
+
+    # (Optional) techdocs.generator.pullImage can be used to disable pulling the latest docker image by default. This can be useful when you are
+    # using a custom techdocs.generator.dockerImage and you have a custom docker login requirement. For example, you need to login to
+    # AWS ECR to pull the docker image.
+    # NOTE: Disabling this requires the docker image was pulled by other means before running the techdocs generator.
+
+    pullImage: true
+
+    mkdocs:
+      # (Optional)  techdocs.generator.omitTechdocsCoreMkdocsPlugin can be used to disable automatic addition of techdocs-core plugin to the mkdocs.yaml files.
+      # Defaults to false, which means that the techdocs-core plugin is always added to the mkdocs file.
+      omitTechdocsCorePlugin: false
+
+      # (Optional and not recommended) Configures the techdocs generator to
+      # attempt to ensure an index.md exists falling back to using <docs-dir>/README.md
+      # or README.md in case a default <docs-dir>/index.md is not provided.
+      # Note that https://www.mkdocs.org/user-guide/configuration/#edit_uri behavior
+      # will be broken in these scenarios.
+      legacyCopyReadmeMdToIndexMd: false
+    # runIn: 'local' # Alternatives - 'local'
   publisher:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
 
@@ -77,7 +103,7 @@ catalog:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration
   rules:
-    - allow: [Component, System, API, Resource, Location]
+    - allow: [Component, API, System, Domain, Resource, Location, User, Group]
   locations:
     # Local example data, file locations are relative to the backend process, typically `packages/backend`
     - type: file
@@ -96,13 +122,22 @@ catalog:
         - allow: [User, Group]
 
     ## Uncomment these lines to add more example data
-    # - type: url
-    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
 
     ## Uncomment these lines to add an example org
-    # - type: url
-    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
-    #   rules:
-    #     - allow: [User, Group]
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
+      rules:
+        - allow: [User, Group]
+        
+    # The backstage demo deployment (this)
+    - type: url
+      target: https://github.com/backstage/demo/blob/master/catalog-info.yaml
+
+    # The backstage library repository
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/catalog-info.yaml
+    
 
  
